@@ -6,6 +6,7 @@
     -   Felipe Olivares
     -   Jaime Navarro
     -   Karla Toledo
+    -   Victor Silva
 
 #Nota: Si te falla un bloque de código, vuelve a correrlo, es probable que se deba a choque de paquetes en R.
 
@@ -69,7 +70,7 @@ athlete_events1 <- athlete_events1 %>%
 summary(athlete_events1)
 ```
 
-Se identifico que...
+Se identificó que...
 
 ### Cantidad de medallas obtenidas por género
 
