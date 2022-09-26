@@ -30,7 +30,7 @@ Es a partir de estos datos que se busca analizar ciertas características de las
 
 ## Exploración de datos
 
-En primer lugar, importamos los archivos ".csv" que contienen la Data.
+En primer lugar, importamos los archivos ".csv" que contienen la Data obtenidos a partir de [120 años de Historia Olimpica](https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results) y [GDP per capita](https://www.kaggle.com/datasets/zgrcemta/world-gdpgdp-gdp-per-capita-and-annual-growths?select=gdp_per_capita.csv).
 
 ```{r}
 library(dplyr)
@@ -268,6 +268,7 @@ Veamos la cantidad de medallas obtenidas por hombres y mujeres.
 ```{r}
 #Generamos el barplot de medallas obtenidas según el género
 barplot(table(athlete_events2$Sex))
+
 ```
 
 A continuación, se presenta el tipo de medalla obtenida por sexo.
