@@ -4,6 +4,7 @@
 
     -   Giulianna Pesce
     -   Felipe Olivares
+    -   Víctor Silva
     -   Jaime Navarro
     -   Karla Toledo
 
@@ -32,23 +33,26 @@ Es a partir de estos datos que se busca analizar ciertas características de las
 En primer lugar, importamos los archivos ".csv" que contienen la Data.
 
 ```{r}
+#Se importan los datasets
 athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
 gdp_per_capita <- read.csv("gdp_per_capita.csv", encoding = "UTF-8", as.is = F)
 noc_regions  <- read.csv("noc_regions.csv", encoding = "UTF-8", as.is = F)
 ```
 
-Posteriormente, se realizó una nueva columna para identificar en binario el sexo y se coloco en orden Bronze:1, Plata:2 y Oro:3 con el fin de poder realizar correctamente el análisis.
+Posteriormente, se realizó una nueva columna para identificar en binario el sexo y se coloco en orden Bronze:1, Plata:2 y Oro:3, además, de un binario si obtuvo o no medalla, esto con el fin de poder realizar correctamente el análisis.
 
 ```{r}
 athlete_events1 <- athlete_events
 library(dplyr)
 
+#Se pasa de F->0 y M->1 en la columna generada Sex_bin
 athlete_events1 <- athlete_events1 %>%
   mutate(Sex_bin = case_when(
     Sex == "F" ~ 0,
     Sex == "M" ~ 1)
   )
 
+#Se genera la columna con B->1, S->2,  G->3
 athlete_events1 <- athlete_events1 %>%
   mutate(Medal_num = case_when(
     is.na(Medal) ~ 0,
@@ -57,6 +61,7 @@ athlete_events1 <- athlete_events1 %>%
     Medal == "Gold" ~ 3)
   )
 
+#Se genera la columna con B,S,G -> 1
 athlete_events1 <- athlete_events1 %>%
   mutate(Medal_bin = case_when(
     is.na(Medal) ~ 0,
@@ -230,12 +235,22 @@ athlete_events2 <- athlete_events2 %>%
 ```
 
 ```{r}
+#Tabla que contiene la cantidad de participantes según su género
 table(athlete_events2$Sex)
 ```
 
 ```{r}
+#Generamos el barplot de medallas obtenidas según el género
 barplot(table(athlete_events2$Sex))
 ```
+
+### Barplot de participación según el género
+
+```{r}
+barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
+```
+
+### GDP x capita (falta esto)
 
 ```{r}
 gdp_per_capita1 <- gdp_per_capita
@@ -246,7 +261,9 @@ gdp_per_capita1$mean <- rowMeans(gdp_per_capita1[,-c(1,2)], na.rm=TRUE)
 ### Matriz de correlación
 
 ```{r}
-#El Null se estandarizo con Height 175 y Weight a 70
+#El Null se estandarizo con Height 175cm y Weight a 70 Kg.
+
+#Se asigna 175 a los NULL en Height
 atletas_std  <- athlete_events1 %>%
   mutate(
     Height = as.numeric(Height),
@@ -255,12 +272,14 @@ atletas_std  <- athlete_events1 %>%
       is.na(Height)==FALSE ~ Height)
   )
 
+#Se asigna 70 a los NULL en Weight
 atletas_std  <- atletas_std %>%
   mutate(Weight = case_when(
     is.na(Weight)==TRUE  ~ 70,
     is.na(Weight)==FALSE ~ Weight)
   )
 
+#Se genera la matriz de correlación
 data_correlacion <- atletas_std %>%
   select(Sex_bin, Height,  Weight,Year ,Medal_bin)
 MCorrelacion<- cor(data_correlacion)
@@ -269,13 +288,8 @@ MCorrelacion<- cor(data_correlacion)
 ```
 
 ```{r}
+#Printeamos la Matriz de correlación
 MCorrelacion
-```
-
-### Barplot de participación según el género
-
-```{r}
-barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
 ```
 
 ## Preguntas y Problemas

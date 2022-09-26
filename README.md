@@ -1,7 +1,7 @@
 # CC5205-2022: Míneria de datos 
-**Proyecto/Hito**: Historia Olimpica de los últimos 120 años.
+**Proyecto/Hito**: Análisis de la Historia Olimpica de los últimos 120 años.
 
-**Integrantes**: Giu, Felipe, Jaimito y Karlita
+**Integrantes**: Giu, Felipe, Victor, Jaimito y Karlita
 
 Data-sets:
 
@@ -10,3 +10,4 @@ Data-sets:
 2.- GDP per Capita (Link?)
 
 #Nota: Si te falla un bloque de código, vuelve a correrlo, es probable que se deba a choque de paquetes en R.
+#Nota2: Si quieres descargar un solo archivo, ingresa al archivo, en el apartado "Raw" realiza clic derecho y selecciona guardar enlace como.../save as...
