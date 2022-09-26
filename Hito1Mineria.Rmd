@@ -18,7 +18,7 @@ Su origen se remonta a la Antigua Grecia, cerca del año 776 a.C, donde se reali
 
 Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. Había deportistas de catorce países distintos reconocidos por el COI: Alemania, Australia, Austria, Bulgaria, Chile, Dinamarca, Estados Unidos, Francia, Grecia, Hungría, Italia, Reino Unidos, Suecia y Suiza. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha. Hasta 150.000 personas se acercaron al recinto para animar a sus deportistas y disfrutar de un momento histórico.
 
-Actualmente, las Olimpiadas se dividen en dos eventos principales: los Juegos Olímpicos de Verano y los Juegos Olímpicos de Invierno. Estos últimos remontan sus inicios al año 1924, donde se llevaban a cabo al mismo tiempo que los juegos de verano. A partir de 1994, se separó la realización de los eventos invernales para potenciar su desarrollo, y desde entonces se realizan en el tercer año de las Olimpiadas (según la Carta Olímpica)
+Actualmente, las Olimpiadas se dividen en dos eventos principales: los Juegos Olímpicos de Verano y los Juegos Olímpicos de Invierno. Estos últimos remontan sus inicios al año 1924, donde se llevaban a cabo al mismo tiempo que los juegos de verano. A partir de 1994, se separó la realización de los eventos invernales para potenciar su desarrollo, y desde entonces se realizan en el tercer año de las Olimpiadas.
 
 El paso de los años ha ido modificando poco a poco la competición. Se han ido añadiendo y quitando disciplinas deportivas, el número de atletas siempre ha ido en aumento y la incorporación femenina supuso todo un hito en lo que se refiere a la igualdad de género. Además, en los primeros años al ganador de cada competición le daban una medalla de plata y una rama de laurel, mientras que el segundo recibía una medalla de cobre y una rama de laurel. A partir de los JJ.OO. de 1904, en San Luis, empezó la tradición de hacer un podio con medallas de oro, plata y bronce para los tres primeros.
 
@@ -33,6 +33,9 @@ Es a partir de estos datos que se busca analizar ciertas características de las
 En primer lugar, importamos los archivos ".csv" que contienen la Data.
 
 ```{r}
+library(dplyr)
+#Se importa la libreria
+
 #Se importan los datasets
 athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
 gdp_per_capita <- read.csv("gdp_per_capita.csv", encoding = "UTF-8", as.is = F)
@@ -45,14 +48,15 @@ Posteriormente, se realizó una nueva columna para identificar en binario el sex
 athlete_events1 <- athlete_events
 library(dplyr)
 
-#Se pasa de F->0 y M->1 en la columna generada Sex_bin
+#pasamos los datos de sexo de los atletas a binario para poder manejar los datos de mejor manera
 athlete_events1 <- athlete_events1 %>%
   mutate(Sex_bin = case_when(
     Sex == "F" ~ 0,
     Sex == "M" ~ 1)
   )
 
-#Se genera la columna con B->1, S->2,  G->3
+#Pasamos los datos de las medallas a valores numéricos
+#en donde la columna con B->1, S->2,  G->3
 athlete_events1 <- athlete_events1 %>%
   mutate(Medal_num = case_when(
     is.na(Medal) ~ 0,
@@ -71,36 +75,51 @@ athlete_events1 <- athlete_events1 %>%
   )
 ```
 
+Se realiza un resumen de cada variable.
+
 ```{r}
 summary(athlete_events1)
 ```
 
-Se identifico que...
+Se identifica que...
+
+### Cantidad de medallas y partipantes por país.
+
+Para esto, primero crearemos una data donde solo estén los participantes que obtuvieron medallas en alguna competencia. Entonces, creamos una nueva data en donde eliminamos las filas que tengan Na's en la columna Medal.
+
+```{r}
+#borramos filas con medalla NA
+athlete_events_not.na <- athlete_events1[!is.na(athlete_events1$Medal),]
+```
 
 ```{r}
 #La distribución de deportistas por país a partir del NOC de cada país
 library(dplyr)
 
-nmedallasxNOC<-athlete_events1%>%
+nparticipantespaises<-athlete_events1%>%
+  filter(duplicated(Name)==FALSE)%>%
   group_by(NOC)%>%
   summarise(total=sum(Sex_bin))
+
+nparticipantespaises<-nparticipantespaises [order(nparticipantespaises$total, decreasing = TRUE), ]
+head(nparticipantespaises)
+
 ```
 
 ```{r}
-nmedallasxNOC <- nmedallasxNOC [order(nmedallasxNOC$total, decreasing = TRUE), ]
+#La distribución de medallas por país a partir del NOC,Medal
+nmedallasxNOC <-table(athlete_events_not.na$NOC,athlete_events_not.na$Medal_bin )
+
+nmedallasxNOC<- as.data.frame.table(nmedallasxNOC) 
+nmedallasxNOC <- nmedallasxNOC [order(nmedallasxNOC$Freq, decreasing = TRUE), ]
+nmedallasxNOC<-  nmedallasxNOC %>%
+  select(Var1,Freq)
 head(nmedallasxNOC)
 ```
 
 ### Top 10 países con medallas de oro, plata y bronce
 
-Se gráfican los países con mayor cantidad de medallas para cada categoría: Gold, Silver y Bronze. Para esto, primero crearemos una data donde solo estén los participantes que obtuvieron medallas en alguna competencia. Entonces, creamos una nueva data en donde eliminamos las filas que tengan Na's en la columna Medal.
-
-```{r}
-#borramos filas con medalla NA
-athlete_events_not.na <- athlete_events[!is.na(athlete_events$Medal),]
-```
-
-Luego, creamos una data para cada categoría de madallas. Así, tendremos 3 tablas en donde solo estén los participantes con medalla de oro, platay bronce, respectivamente.
+En este apartado se gráfican los países con mayor cantidad de medallas para cada categoría: Gold, Silver y Bronze. Para esto se crea una data para cada categoría de medallas. Así, tendremos 3 tablas en donde solo estén los participantes con medalla de oro, plata y bronce, respectivamente.
 
 #### Medallas de Oro
 
@@ -230,6 +249,11 @@ athlete_events2 <- athlete_events2 %>%
   filter(Medal_bin==1)%>%
   select(-Medal)
 
+#Separamos la data por sexo
+#Atletas mujeres
+mujeres<-athlete_events1[athlete_events1$Sex=="F",]
+#Atletas hombres
+hombres<-athlete_events1[athlete_events1$Sex=="M",]
 
 
 ```
@@ -239,9 +263,29 @@ athlete_events2 <- athlete_events2 %>%
 table(athlete_events2$Sex)
 ```
 
+Veamos la cantidad de medallas obtenidas por hombres y mujeres.
+
 ```{r}
 #Generamos el barplot de medallas obtenidas según el género
 barplot(table(athlete_events2$Sex))
+```
+
+A continuación, se presenta el tipo de medalla obtenida por sexo.
+
+```{r}
+#Medallas obtenidas por mujeres
+medallas_fem<-data.frame(table(mujeres$Medal))
+medallas_mujeres<-medallas_fem[order(medallas_fem$Freq),]
+print("Mujeres")
+medallas_mujeres
+```
+
+```{r}
+#Medallas obtenidas por hombres
+medallas_mas<-data.frame(table(hombres$Medal))
+medallas_hombres<-medallas_mas[order(medallas_mas$Freq),]
+print("Hombres")
+medallas_hombres
 ```
 
 ### Barplot de participación según el género
