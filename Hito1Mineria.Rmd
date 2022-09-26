@@ -3,10 +3,13 @@
 -   Giu, Felipe, Jaime y Karla
 
 ```{r}
-#head(athlete_events)
+athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
+gdp_per_capita <- read.csv("gdp_per_capita.csv", encoding = "UTF-8", as.is = F)
+```
+
+```{r}
 athlete_events1 <- athlete_events
-#library(dplyr)
-library(tidyverse)
+library(dplyr)
 
 athlete_events1 <- athlete_events1 %>%
   mutate(Sex_bin = case_when(
@@ -32,22 +35,49 @@ athlete_events1 <- athlete_events1 %>%
     Medal == "Gold" ~ 1
   )
   )
-
-
 ```
 
 ```{r}
 summary(athlete_events1)
 ```
 
+```{r}
+library(dplyr)
+athlete_events2 <- athlete_events[c("Sex", "Medal")]
+
+athlete_events2 <- athlete_events2 %>%
+  mutate(Medal_bin = case_when(
+    is.na(Medal) ~ 0,
+    Medal %in% c("Bronze", "Silver", "Gold") ~ 1
+  )
+  )%>%
+  filter(Medal_bin==1)%>%
+  select(-Medal)
+
+barplot(table(athlete_events2$Sex))
+```
+
+```{r}
+gdp_per_capita1 <- gdp_per_capita
+gdp_per_capita1$mean <- rowMeans(gdp_per_capita1[,-c(1,2)], na.rm=TRUE)
+#gdp_per_capita1
+```
+
 # Matriz de correlación
 
 ```{r}
 #Fix Null a estandarizado con Height 175 y Weight a 70
+library(tidyverse)
 atletas_std  <- athlete_events1 %>%
-  mutate(Height = case_when(
-    is.na(Height)==TRUE  ~ 175,
-    is.na(Height)==FALSE ~ Height
+  mutate(
+    Height = as.numeric(Height),
+    Height = case_when(
+      is.na(Height)~ 175,
+      is.na(Height)==FALSE ~ Height
+      
+      
+
+
   )
   )
 
@@ -72,10 +102,6 @@ MCorrelacion
 # Histograma de participación según el género
 
 ```{r}
-hist(atletas_std$Sex_bin,main = "Histograma de participación según el género", xlab= "Género en Binario",ylab = "Cantidad de participantes")
 
-```
-
-```{r}
-hist(atletas_std$Sex_bin,main = "Histograma de participación según el género", xlab= "Género en Binario",ylab = "Cantidad de participantes")
+barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
 ```
