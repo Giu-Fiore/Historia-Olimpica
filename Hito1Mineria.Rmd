@@ -294,12 +294,32 @@ medallas_hombres
 barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
 ```
 
-### GDP x capita (falta esto)
+### Medallas por país y ciudad
 
 ```{r}
+
+#Correlación Nacionalidad con Sede (obtener país según “Games”)
+#como tenemos valores categoricos no podemos aplicar directamente una
+#correlación. Por ende, haremos una tabla de contingencia. Para ello usaremos
+#solamente los datos que tengan registros de haber obtenido una medalla
+#creamos otro dataset con sólo los registros de medallas
+athlete_events_medallas <- athlete_events
+athlete_events_medallas <- athlete_events_medallas[!is.na(athlete_events_medallas$Medal),]
+
+#ahora obtenemos la tabla de contingencia que nos indica cuántas veces un país
+#obtuvo medallas en cierta ciudad.
+tabla_contingencia <- data.frame(table(athlete_events_medallas$NOC, athlete_events_medallas$City))
+tabla_contingencia <- tabla_contingencia  [order(tabla_contingencia$Freq, decreasing = TRUE), ]
+head(tabla_contingencia)
+```
+
+### GDP x pais
+
+```{r}
+
 gdp_per_capita1 <- gdp_per_capita
 gdp_per_capita1$mean <- rowMeans(gdp_per_capita1[,-c(1,2)], na.rm=TRUE)
-#head(gdp_per_capita1)
+head(gdp_per_capita1)
 ```
 
 ### Matriz de correlación
