@@ -6,16 +6,17 @@
     -   Felipe Olivares
     -   Jaime Navarro
     -   Karla Toledo
+    -   Victor Silva
 
 #Nota: Si te falla un bloque de código, vuelve a correrlo, es probable que se deba a choque de paquetes en R.
 
 ## Introducción
 
-Los Juegos Olímpicos constan del mayor evento deportivo del mundo, reuniendo a los países y sus representantes en diversas disciplinas, quienes pondrán a prueba todas sus habilidades, trabajo y talento, para conseguir la tan añorada presea dorada.
+Los Juegos Olímpicos constan del mayor evento deportivo del mundo, reuniendo a cientos de países y sus representantes en diversas disciplinas, quienes pondrán a prueba todas sus habilidades, trabajo y talento, para conseguir la tan añorada presea dorada.
 
 Su origen se remonta a la Antigua Grecia, cerca del año 776 a.C, donde se realizaban en el santuario de Zeus ubicado en Olimpia, en honor a dicho dios. Durante 13 realizaciones, la única competencia realizada consistía en la carrera de los 600 pies. Cerca del año 724 a.C, se sumaron más competencias como carreras de carros tirados a caballo, lucha y lanzamiento de disco. Debido a la expansión del cristianismo y la prohibición de prácticas consideradas "paganas", los Juegos Olímpicos dejaron de realizarse.
 
-Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. Había deportistas de catorce países distintos reconocidos por el COI: Alemania, Australia, Austria, Bulgaria, Chile, Dinamarca, Estados Unidos, Francia, Grecia, Hungría, Italia, Reino Unidos, Suecia y Suiza. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha. Hasta 150.000 personas se acercaron al recinto para animar a sus deportistas y disfrutar de un momento histórico.
+Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. Había deportistas de catorce países distintos reconocidos por el Comité Olímpico Internacional: Alemania, Australia, Austria, Bulgaria, Chile, Dinamarca, Estados Unidos, Francia, Grecia, Hungría, Italia, Reino Unidos, Suecia y Suiza. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha. Hasta 150.000 personas se acercaron al recinto para animar a sus deportistas y disfrutar de un momento histórico.
 
 Actualmente, las Olimpiadas se dividen en dos eventos principales: los Juegos Olímpicos de Verano y los Juegos Olímpicos de Invierno. Estos últimos remontan sus inicios al año 1924, donde se llevaban a cabo al mismo tiempo que los juegos de verano. A partir de 1994, se separó la realización de los eventos invernales para potenciar su desarrollo, y desde entonces se realizan en el tercer año de las Olimpiadas (según la Carta Olímpica)
 
@@ -69,7 +70,7 @@ athlete_events1 <- athlete_events1 %>%
 summary(athlete_events1)
 ```
 
-Se identifico que...
+Se identificó que...
 
 ### Cantidad de medallas obtenidas por género
 
