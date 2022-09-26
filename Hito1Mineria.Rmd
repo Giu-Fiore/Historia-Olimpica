@@ -1,6 +1,33 @@
-# Hito 1
+# Hito 1: Análisis a 120 años de historia olímpica
 
--   Giu, Felipe, Jaime y Karla
+-   **Integrantes (Grupo 7)**:
+
+    -   Giulianna Pesce
+    -   Felipe Olivares
+    -   Jaime Navarro
+    -   Karla Toledo
+
+#Nota: Si te falla un bloque de código, vuelve a correrlo, es probable que se deba a choque de paquetes en R.
+
+## Introducción
+
+Los Juegos Olímpicos constan del mayor evento deportivo del mundo, reuniendo a los países y sus representantes en diversas disciplinas, quienes pondrán a prueba todas sus habilidades, trabajo y talento, para conseguir la tan añorada presea dorada.
+
+Su origen se remonta a la Antigua Grecia, cerca del año 776 a.C, donde se realizaban en el santuario de Zeus ubicado en Olimpia, en honor a dicho dios. Durante 13 realizaciones, la única competencia realizada consistía en la carrera de los 600 pies. Cerca del año 724 a.C, se sumaron más competencias como carreras de carros tirados a caballo, lucha y lanzamiento de disco. Debido a la expansión del cristianismo y la prohibición de prácticas consideradas "paganas", los Juegos Olímpicos dejaron de realizarse.
+
+Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. Había deportistas de catorce países distintos reconocidos por el COI: Alemania, Australia, Austria, Bulgaria, Chile, Dinamarca, Estados Unidos, Francia, Grecia, Hungría, Italia, Reino Unidos, Suecia y Suiza. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha. Hasta 150.000 personas se acercaron al recinto para animar a sus deportistas y disfrutar de un momento histórico.
+
+Actualmente, las Olimpiadas se dividen en dos eventos principales: los Juegos Olímpicos de Verano y los Juegos Olímpicos de Invierno. Estos últimos remontan sus inicios al año 1924, donde se llevaban a cabo al mismo tiempo que los juegos de verano. A partir de 1994, se separó la realización de los eventos invernales para potenciar su desarrollo, y desde entonces se realizan en el tercer año de las Olimpiadas (según la Carta Olímpica)
+
+El paso de los años ha ido modificando poco a poco la competición. Se han ido añadiendo y quitando disciplinas deportivas, el número de atletas siempre ha ido en aumento y la incorporación femenina supuso todo un hito en lo que se refiere a la igualdad de género. Además, en los primeros años al ganador de cada competición le daban una medalla de plata y una rama de laurel, mientras que el segundo recibía una medalla de cobre y una rama de laurel. A partir de los JJ.OO. de 1904, en San Luis, empezó la tradición de hacer un podio con medallas de oro, plata y bronce para los tres primeros.
+
+Los Juegos Olímpicos se celebran desde entonces cada cuatro años, tan solo las dos Guerras Mundiales han impedido este evento. En 1916, 1940 y 1944 los deportistas se quedaron sin su competición internacional.
+
+En base a este evento tan importante, se creó el dataset seleccionado para desarrollar este proyecto, el cual se centra en la participación de más de 270 mil atletas desde sus comienzos, describiendo atributos tales como género, edad, altura, peso, país de origen, año de la participación, deporte en que se desempeña y qué medalla ganó.
+
+Es a partir de estos datos que se busca analizar ciertas características de las olimpiadas, tales como la evolución de la participación femenina, mayor concentración de medallas para ciertos países, características físicas predominantes según el deporte practicado, entre otras.
+
+## Exploración de datos
 
 ```{r}
 athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
@@ -14,8 +41,7 @@ library(dplyr)
 athlete_events1 <- athlete_events1 %>%
   mutate(Sex_bin = case_when(
     Sex == "F" ~ 0,
-    Sex == "M" ~ 1
-  )
+    Sex == "M" ~ 1)
   )
 
 athlete_events1 <- athlete_events1 %>%
@@ -23,8 +49,7 @@ athlete_events1 <- athlete_events1 %>%
     is.na(Medal) ~ 0,
     Medal == "Bronze" ~ 1,
     Medal == "Silver" ~ 2,
-    Medal == "Gold" ~ 3
-  )
+    Medal == "Gold" ~ 3)
   )
 
 athlete_events1 <- athlete_events1 %>%
@@ -32,8 +57,7 @@ athlete_events1 <- athlete_events1 %>%
     is.na(Medal) ~ 0,
     Medal == "Bronze" ~ 1,
     Medal == "Silver" ~ 1,
-    Medal == "Gold" ~ 1
-  )
+    Medal == "Gold" ~ 1)
   )
 ```
 
@@ -60,32 +84,25 @@ barplot(table(athlete_events2$Sex))
 ```{r}
 gdp_per_capita1 <- gdp_per_capita
 gdp_per_capita1$mean <- rowMeans(gdp_per_capita1[,-c(1,2)], na.rm=TRUE)
-#gdp_per_capita1
+#head(gdp_per_capita1)
 ```
 
-# Matriz de correlación
+### Matriz de correlación
 
 ```{r}
-#Fix Null a estandarizado con Height 175 y Weight a 70
-library(tidyverse)
+#El Null se estandarizo con Height 175 y Weight a 70
 atletas_std  <- athlete_events1 %>%
   mutate(
     Height = as.numeric(Height),
     Height = case_when(
       is.na(Height)~ 175,
-      is.na(Height)==FALSE ~ Height
-      
-      
-
-
-  )
+      is.na(Height)==FALSE ~ Height)
   )
 
 atletas_std  <- atletas_std %>%
   mutate(Weight = case_when(
     is.na(Weight)==TRUE  ~ 70,
-    is.na(Weight)==FALSE ~ Weight
-  )
+    is.na(Weight)==FALSE ~ Weight)
   )
 
 data_correlacion <- atletas_std %>%
@@ -99,9 +116,27 @@ MCorrelacion<- cor(data_correlacion)
 MCorrelacion
 ```
 
-# Histograma de participación según el género
+### Histograma de participación según el género
 
 ```{r}
-
 barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
 ```
+
+## Preguntas y Problemas
+
+Es en base a esta primera exploración de datos y el análisis previo del dataset, se plantean las preguntas que guiarán el resto del proyecto.
+
+-   ¿Cómo se agrupan a partir de las características físicas (peso, altura) de los ganadores de medalla por deporte? ¿Existe alguna relación con los hechos históricos?
+
+-   ¿Cuánto determina la riqueza de un país su rendimiento en los Juegos Olímpicos?
+
+```{=html}
+<!-- -->
+```
+-   ¿Se puede predecir la distribución de los ganadores por país en un año?
+
+-   ¿Cómo evolucionará la participación femenina en el futuro?
+
+-   ¿Existen patrones en los datos que permitan determinar similitudes o diferencias entre países/atletas?
+
+Mediante las preguntas se espera comprender la influencia tanto las medallas, participación y juegos realizados, para lograr ver sus consecuencias en la sociedad. Por ejemplo, observar como las olimpiadas han influido en la paridad de género y/o estudiar la evolución de los atletas al incorporar nuevas disciplinas.
