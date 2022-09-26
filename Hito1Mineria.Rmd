@@ -249,7 +249,7 @@ athlete_events2 <- athlete_events2 %>%
   filter(Medal_bin==1)%>%
   select(-Medal)
 
-#Separamos la data por sexo
+#Separamos el dataset por sexo
 #Atletas mujeres
 mujeres<-athlete_events1[athlete_events1$Sex=="F",]
 #Atletas hombres
@@ -277,7 +277,6 @@ A continuación, se presenta el tipo de medalla obtenida por sexo.
 #Medallas obtenidas por mujeres
 medallas_fem<-data.frame(table(mujeres$Medal))
 medallas_mujeres<-medallas_fem[order(medallas_fem$Freq),]
-print("Mujeres")
 medallas_mujeres
 ```
 
@@ -285,7 +284,6 @@ medallas_mujeres
 #Medallas obtenidas por hombres
 medallas_mas<-data.frame(table(hombres$Medal))
 medallas_hombres<-medallas_mas[order(medallas_mas$Freq),]
-print("Hombres")
 medallas_hombres
 ```
 
@@ -314,16 +312,115 @@ tabla_contingencia <- tabla_contingencia  [order(tabla_contingencia$Freq, decrea
 head(tabla_contingencia)
 ```
 
-### GDP x pais
+### Barplot de medallas por mujeres
+
+```{r}
+#distribución de medallas femeninas
+barplot(medallas_mujeres$Freq, names.arg=medallas_mujeres$Var1,xlab="Tipo de medalla", ylab="Ganadores")
+title("Medallas ganadas por mujeres")
+```
+
+### Barplot de medallas masculinas
+
+```{r}
+#distribucion de medallas masculinas
+barplot(medallas_hombres$Freq, names.arg=medallas_hombres$Var1,xlab="Tipo de medalla", ylab="Ganadores")
+title("Medallas ganadas por hombres")
+
+```
+
+### Barplot de Competidores por país
 
 ```{r}
 
+#pasamos los datos de sexo de los atletas a binario para poder manejar los datos de mejor manera
+atletas_sexbin<-athlete_events%>%
+  mutate(Sex_bin=case_when(Sex=="F"~0, Sex=="M"~1))
+
+#para contar
+atletas_sexbin<-atletas_sexbin%>%
+  mutate(cuentapipul=case_when(Sex=="F"~1, Sex=="M"~1))
+
+#pasamos los datos de las medallas a valores numéricos
+atletas<-atletas_sexbin%>%
+  mutate(Medallas=case_when(is.na(Medal)~0, Medal=="Bronze"~3, Medal=="Silver"~2, Medal=="Gold"~1))
+
+atletas<-atletas%>%
+  mutate(cuentamedalla=case_when(is.na(Medal)~0, Medal=="Bronze"~1, Medal=="Silver"~1, Medal=="Gold"~1))
+
+#total de participantes por país
+paises<-atletas%>%
+  filter(duplicated(Name)==FALSE)%>%
+  group_by(NOC)%>%
+  summarise(total=sum(cuentapipul))
+
+#mujeres por país
+women<-atletas%>%
+  filter(Sex=="F" & duplicated(Name)==FALSE)%>%
+  group_by(NOC)%>%
+  summarise(total=sum(cuentapipul))
+
+
+#distribución de competidores por país
+barplot(paises$total, xlab="Países", ylab="Número de Participantes")
+title("Cantidad de participantes por país")
+```
+
+### Barplot de Mujeres por país
+
+```{r}
+#distribución de mujeres por país
+barplot(women$total, xlab='Paises', ylab='Número de participantes')
+title("Cantidad de mujeres participantes por país")
+```
+
+### Barplot de Hombres por país
+
+```{r}
+#hombres por país
+men<-atletas%>%
+  filter(Sex=="M" & duplicated(Name)==FALSE)%>%
+  group_by(NOC)%>%
+  summarise(total=sum(cuentapipul))
+
+barplot(men$total, xlab='Paises', ylab='Número de participantes')
+title('Cantidad de hombres participantes por país')
+```
+
+### Medallas por deporte 
+
+```{r}
+#medallas
+med<-atletas%>%
+  group_by(Sport)%>%
+  summarise(total=sum(cuentamedalla))
+med
+
+#distribucion de medallas por deporte
+barplot(med$total, names.arg=med$Sport, xlab='Deportes', ylab= 'Medallas')
+title('Medallas por deporte')
+```
+
+### GDP por pais
+
+```{r}
 gdp_per_capita1 <- gdp_per_capita
+#columna que muestra el promedio del PIB per capita
 gdp_per_capita1$mean <- rowMeans(gdp_per_capita1[,-c(1,2)], na.rm=TRUE)
-head(gdp_per_capita1)
+gdp_per_capita1 <- gdp_per_capita1%>%
+  #se filtran aquellos países que carecen de información suficiente
+  filter(!is.na(X1960))
+#se ordenan los países con mayor PIB per capita
+gdp_per_capita1 <- gdp_per_capita1[order(gdp_per_capita1$mean, decreasing = TRUE), ]
+#se muestra el nombre del país y su PIB per capita promedio
+top <- data.frame(gdp_per_capita1$`Country.Name`,gdp_per_capita1$mean)
+
+head(top,20)
 ```
 
 ### Matriz de correlación
+
+Para realizar la matriz de correlación se estandarizaron los NULLs a 175cm de altura y 70Kg de peso para poder realizar correctamente la matriz.
 
 ```{r}
 #El Null se estandarizo con Height 175cm y Weight a 70 Kg.
@@ -355,6 +452,48 @@ MCorrelacion<- cor(data_correlacion)
 ```{r}
 #Printeamos la Matriz de correlación
 MCorrelacion
+```
+
+Veamos la siguiente matriz de correlación considerando solo Hombres.
+
+```{r}
+#El Null se estandarizo con Height 175cm y Weight a 70 Kg.
+
+#Se asigna 175 a los NULL en Height
+atletas_stdhombre <- subset(atletas_std, Sex=='M')
+
+#Se genera la matriz de correlación
+data_correlacionh <- atletas_stdhombre %>%
+  select(Height,  Weight,Year ,Medal_bin)
+MCorrelacionh<- cor(data_correlacionh)
+
+
+```
+
+```{r}
+#Printeamos la Matriz de correlación
+MCorrelacionh
+```
+
+Veamos la siguiente matriz de correlación considerando solo mujeres.
+
+```{r}
+#El Null se estandarizo con Height 175cm y Weight a 70 Kg.
+
+#Se asigna 175 a los NULL en Height
+atletas_stdmujer <- subset(atletas_std, Sex=='F')
+
+#Se genera la matriz de correlación
+data_correlacionm <- atletas_stdmujer %>%
+  select(Height,  Weight,Year ,Medal_bin)
+MCorrelacionm<- cor(data_correlacionm)
+
+
+```
+
+```{r}
+#Printeamos la Matriz de correlación
+MCorrelacionm
 ```
 
 ## Preguntas y Problemas
