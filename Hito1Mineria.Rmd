@@ -34,9 +34,10 @@ En primer lugar, importamos los archivos ".csv" que contienen la Data.
 ```{r}
 athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
 gdp_per_capita <- read.csv("gdp_per_capita.csv", encoding = "UTF-8", as.is = F)
+noc_regions  <- read.csv("noc_regions.csv", encoding = "UTF-8", as.is = F)
 ```
 
-Posteriormente, se realizó una nueva columna para identificar en binario el sexo y se coloco en orden Bronze:1, Plata:2 y Oro:3 con el fin de poder realizar correctamente el Summary.
+Posteriormente, se realizó una nueva columna para identificar en binario el sexo y se coloco en orden Bronze:1, Plata:2 y Oro:3 con el fin de poder realizar correctamente el análisis.
 
 ```{r}
 athlete_events1 <- athlete_events
@@ -71,6 +72,144 @@ summary(athlete_events1)
 
 Se identifico que...
 
+```{r}
+#La distribución de deportistas por país a partir del NOC de cada país
+library(dplyr)
+
+nmedallasxNOC<-athlete_events1%>%
+  group_by(NOC)%>%
+  summarise(total=sum(Sex_bin))
+```
+
+```{r}
+nmedallasxNOC <- nmedallasxNOC [order(nmedallasxNOC$total, decreasing = TRUE), ]
+head(nmedallasxNOC)
+```
+
+### Top 10 países con medallas de oro, plata y bronce
+
+Se gráfican los países con mayor cantidad de medallas para cada categoría: Gold, Silver y Bronze. Para esto, primero crearemos una data donde solo estén los participantes que obtuvieron medallas en alguna competencia. Entonces, creamos una nueva data en donde eliminamos las filas que tengan Na's en la columna Medal.
+
+```{r}
+#borramos filas con medalla NA
+athlete_events_not.na <- athlete_events[!is.na(athlete_events$Medal),]
+```
+
+Luego, creamos una data para cada categoría de madallas. Así, tendremos 3 tablas en donde solo estén los participantes con medalla de oro, platay bronce, respectivamente.
+
+#### Medallas de Oro
+
+```{r}
+athlete_events_oro <- athlete_events_not.na[athlete_events_not.na$Medal=="Gold",] #filtramos solo las medallas de oro
+```
+
+Vemos los países que obtienen medallas de oro.
+
+```{r}
+# Países con medalla de oro
+head(unique(athlete_events_oro$NOC))
+```
+
+Creamos una tabla en donde se muestre la cantidad de medallas de oro que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de oro.
+
+```{r}
+tabla_paises_oro <- data.frame(table(athlete_events_oro$NOC))
+
+tabla_paises_oro <- tabla_paises_oro[order(tabla_paises_oro$Freq, decreasing = TRUE), ]
+```
+
+Para tener el top 10 de países con mayor cantidad de medallas de oro filtramos la tabla para obtener solo las primeras 10 filas.
+
+```{r}
+top10_oro <- tabla_paises_oro[0:10,]
+head(top10_oro)
+```
+
+Graficamos la cantidad de medallas de oro que tiene cada país que se encuentra en el top 10.
+
+```{r}
+barplot(top10_oro$Freq, names.arg = top10_oro$Var1,xlab ="Países", ylab ="Cantidad de medallas de oro")
+title("Top 10 países con mayor cantidad de medallas de oro")
+```
+
+Se puede observar que en el primer lugar del top 10 se encuentra Estados Unidos, con más de 2500 medallas de oro, una cantidad bastante mayor que el resto de los países. Le sigue la URS con un poco más de 1000 medallas de oro, mientras que el resto de países (Alemania, Gran Bretaña, Italia, Francia, Suecia, Canadá, Hungría y la República Democrática Alemana) se encuentran bastante cercanos entre sí, con alrededor de 500 medallas de oro.
+
+#### Medallas de Plata
+
+```{r}
+athlete_events_plata <- athlete_events_not.na[athlete_events_not.na$Medal=="Silver",] #filtramos solo las medallas de plata
+```
+
+Vemos los países que obtienen medallas de plata.
+
+```{r}
+# Países con medalla de plata
+head(unique(athlete_events_plata$NOC))
+```
+
+Creamos una tabla en donde se muestre la cantidad de medallas de plata que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de plata.
+
+```{r}
+tabla_paises_plata <- data.frame(table(athlete_events_plata$NOC))
+
+tabla_paises_plata <- tabla_paises_plata[order(tabla_paises_plata$Freq, decreasing = TRUE), ]
+```
+
+Para tener el top 10 de países con mayor cantidad de medallas de plata filtramos la tabla para obtener solo las primeras 10 filas.
+
+```{r}
+top10_plata <- tabla_paises_plata[0:10,]
+head(top10_plata)
+```
+
+Graficamos la cantidad de medallas de plata que tiene cada país que se encuentra en el top 10.
+
+```{r}
+barplot(top10_plata$Freq, names.arg = top10_plata$Var1,xlab ="Países", ylab ="Cantidad de medallas de plata")
+title("Top 10 países con mayor cantidad de medallas de plata")
+```
+
+Se puede observar que en el primer lugar del top 10 se encuentra Estados Unidos, con más de 1500 medallas de plata, una cantidad bastante mayor que el resto de los países. Le sigue Gran Bretaña y la URS con el mismo nivel de medallas, y más abajo Alemania y Francia con un poco más de 500 medallas de plata. Luego se encuentran Italia y Suecia con 500 medallas, mientras que Australia, Canadá y Rusia se ubican en los 3 últimos niveles con un poco menos de 500 medallas de plata.
+
+#### Medallas de Bronce
+
+```{r}
+athlete_events_bronce <- athlete_events_not.na[athlete_events_not.na$Medal=="Bronze",] #filtramos solo las medallas de plata
+```
+
+Vemos los países que obtienen medallas de bronce.
+
+```{r}
+# Países con medalla de bronce
+head(unique(athlete_events_bronce$NOC))
+```
+
+Creamos una tabla en donde se muestre la cantidad de medallas de bronce que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de bronce
+
+```{r}
+tabla_paises_bronce <- data.frame(table(athlete_events_bronce$NOC))
+
+tabla_paises_bronce <- tabla_paises_bronce[order(tabla_paises_bronce$Freq, decreasing = TRUE), ]
+```
+
+Para tener el top 10 de países con mayor cantidad de medallas de bronce filtramos la tabla para obtener solo las primeras 10 filas.
+
+```{r}
+top10_bronce <- tabla_paises_bronce[0:10,]
+head(top10_bronce)
+```
+
+Graficamos la cantidad de medallas de bronce que tiene cada país que se encuentra en el top 10.
+
+```{r}
+barplot(top10_bronce$Freq, names.arg = top10_bronce$Var1,xlab ="Países", ylab ="Cantidad de medallas de bronce")
+title("Top 10 países con mayor cantidad de medallas de bronce")
+```
+
+Se puede observar que en el primer lugar del top 10 se encuentra Estados Unidos, con más de 1200 medallas de bronce, una cantidad bastante mayor que el resto de los países. Le sigue Alemania, la URS, Francia y Gran Bretaña con un nivel similar de medallas sobre las 600, y más abajo se encuentran Suecia, Italia y Australia con aproximadamente 500 medallas. Finalmente, en los últimos 2 niveles se encuentran Canadá y Finlandia con un poco más de 400 medallas de bronce.
+
+En conclusión, en los 3 gráficos los países que más se repiten son Estados Unidos, Alemania, la URS, Francia, Gran Bretaña, Suecia, Italia y Canadá, estando estos 8 países en el top 10 de los 3 tipos de medallas. Además, se observa que en los 3 gráficos Estados Unidos está muy por sobre el resto de países, mostrando una gran ventaja en la cantidad de medallas que obtienen.
+
 ### Cantidad de medallas obtenidas por género
 
 ```{r}
@@ -86,6 +225,15 @@ athlete_events2 <- athlete_events2 %>%
   filter(Medal_bin==1)%>%
   select(-Medal)
 
+
+
+```
+
+```{r}
+table(athlete_events2$Sex)
+```
+
+```{r}
 barplot(table(athlete_events2$Sex))
 ```
 
