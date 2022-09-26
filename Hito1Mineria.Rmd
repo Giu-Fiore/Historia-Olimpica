@@ -29,10 +29,14 @@ Es a partir de estos datos que se busca analizar ciertas características de las
 
 ## Exploración de datos
 
+En primer lugar, importamos los archivos ".csv" que contienen la Data.
+
 ```{r}
 athlete_events <- read.csv("athlete_events.csv", encoding = "UTF-8", as.is = F)
 gdp_per_capita <- read.csv("gdp_per_capita.csv", encoding = "UTF-8", as.is = F)
 ```
+
+Posteriormente, se realizó una nueva columna para identificar en binario el sexo y se coloco en orden Bronze:1, Plata:2 y Oro:3 con el fin de poder realizar correctamente el Summary.
 
 ```{r}
 athlete_events1 <- athlete_events
@@ -64,6 +68,10 @@ athlete_events1 <- athlete_events1 %>%
 ```{r}
 summary(athlete_events1)
 ```
+
+Se identifico que...
+
+### Cantidad de medallas obtenidas por género
 
 ```{r}
 library(dplyr)
@@ -116,7 +124,7 @@ MCorrelacion<- cor(data_correlacion)
 MCorrelacion
 ```
 
-### Histograma de participación según el género
+### Barplot de participación según el género
 
 ```{r}
 barplot(table(athlete_events1$Sex)  , main = "Histograma de participación según el género", xlab= "Género",ylab = "Cantidad de participantes", ylim=c(0,250000))
@@ -130,9 +138,6 @@ Es en base a esta primera exploración de datos y el análisis previo del datase
 
 -   ¿Cuánto determina la riqueza de un país su rendimiento en los Juegos Olímpicos?
 
-```{=html}
-<!-- -->
-```
 -   ¿Se puede predecir la distribución de los ganadores por país en un año?
 
 -   ¿Cómo evolucionará la participación femenina en el futuro?
