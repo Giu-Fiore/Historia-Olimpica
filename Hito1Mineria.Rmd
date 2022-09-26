@@ -1,0 +1,81 @@
+# Hito 1
+
+-   Giu, Felipe, Jaime y Karla
+
+```{r}
+#head(athlete_events)
+athlete_events1 <- athlete_events
+#library(dplyr)
+library(tidyverse)
+
+athlete_events1 <- athlete_events1 %>%
+  mutate(Sex_bin = case_when(
+    Sex == "F" ~ 0,
+    Sex == "M" ~ 1
+  )
+  )
+
+athlete_events1 <- athlete_events1 %>%
+  mutate(Medal_num = case_when(
+    is.na(Medal) ~ 0,
+    Medal == "Bronze" ~ 1,
+    Medal == "Silver" ~ 2,
+    Medal == "Gold" ~ 3
+  )
+  )
+
+athlete_events1 <- athlete_events1 %>%
+  mutate(Medal_bin = case_when(
+    is.na(Medal) ~ 0,
+    Medal == "Bronze" ~ 1,
+    Medal == "Silver" ~ 1,
+    Medal == "Gold" ~ 1
+  )
+  )
+
+
+```
+
+```{r}
+summary(athlete_events1)
+```
+
+# Matriz de correlación
+
+```{r}
+#Fix Null a estandarizado con Height 175 y Weight a 70
+atletas_std  <- athlete_events1 %>%
+  mutate(Height = case_when(
+    is.na(Height)==TRUE  ~ 175,
+    is.na(Height)==FALSE ~ Height
+  )
+  )
+
+atletas_std  <- atletas_std %>%
+  mutate(Weight = case_when(
+    is.na(Weight)==TRUE  ~ 70,
+    is.na(Weight)==FALSE ~ Weight
+  )
+  )
+
+data_correlacion <- atletas_std %>%
+  select(Sex_bin, Height,  Weight,Year ,Medal_bin)
+MCorrelacion<- cor(data_correlacion)
+
+
+```
+
+```{r}
+MCorrelacion
+```
+
+# Histograma de participación según el género
+
+```{r}
+hist(atletas_std$Sex_bin,main = "Histograma de participación según el género", xlab= "Género en Binario",ylab = "Cantidad de participantes")
+
+```
+
+```{r}
+hist(atletas_std$Sex_bin,main = "Histograma de participación según el género", xlab= "Género en Binario",ylab = "Cantidad de participantes")
+```
