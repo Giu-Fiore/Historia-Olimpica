@@ -16,7 +16,7 @@ Los Juegos Olímpicos constan del mayor evento deportivo del mundo, reuniendo a 
 
 Su origen se remonta a la Antigua Grecia, cerca del año 776 a.C, donde se realizaban en el santuario de Zeus ubicado en Olimpia, en honor a dicho dios. Durante 13 realizaciones, la única competencia realizada consistía en la carrera de los 600 pies. Cerca del año 724 a.C, se sumaron más competencias como carreras de carros tirados a caballo, lucha y lanzamiento de disco. Debido a la expansión del cristianismo y la prohibición de prácticas consideradas "paganas", los Juegos Olímpicos dejaron de realizarse.
 
-Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. Había deportistas de catorce países distintos reconocidos por el COI: Alemania, Australia, Austria, Bulgaria, Chile, Dinamarca, Estados Unidos, Francia, Grecia, Hungría, Italia, Reino Unidos, Suecia y Suiza. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha. Hasta 150.000 personas se acercaron al recinto para animar a sus deportistas y disfrutar de un momento histórico.
+Hace 120 años, se inauguraron en Atenas los primeros Juegos Olímpicos modernos. En los Juegos de la I Olimpiada sólo participaron 241 atletas, todos hombres, pues aún no estaba bien visto que las mujeres participaran en esta clase de eventos. En aquella primera cita olímpica sólo se compitió en nueve deportes: atletismo, ciclismo, esgrima, gimnasia, tiro, natación, tenis, halterofilia y lucha.
 
 Actualmente, las Olimpiadas se dividen en dos eventos principales: los Juegos Olímpicos de Verano y los Juegos Olímpicos de Invierno. Estos últimos remontan sus inicios al año 1924, donde se llevaban a cabo al mismo tiempo que los juegos de verano. A partir de 1994, se separó la realización de los eventos invernales para potenciar su desarrollo, y desde entonces se realizan en el tercer año de las Olimpiadas.
 
@@ -81,7 +81,7 @@ Se realiza un resumen de cada variable.
 summary(athlete_events1)
 ```
 
-Se identifica que...
+Se identifica que la cantidad de hombres es mucho
 
 ### Cantidad de medallas y partipantes por país.
 
@@ -102,7 +102,7 @@ nparticipantespaises<-athlete_events1%>%
   summarise(total=sum(Sex_bin))
 
 nparticipantespaises<-nparticipantespaises [order(nparticipantespaises$total, decreasing = TRUE), ]
-head(nparticipantespaises)
+head(nparticipantespaises,3)
 
 ```
 
@@ -114,7 +114,7 @@ nmedallasxNOC<- as.data.frame.table(nmedallasxNOC)
 nmedallasxNOC <- nmedallasxNOC [order(nmedallasxNOC$Freq, decreasing = TRUE), ]
 nmedallasxNOC<-  nmedallasxNOC %>%
   select(Var1,Freq)
-head(nmedallasxNOC)
+head(nmedallasxNOC,3)
 ```
 
 ### Top 10 países con medallas de oro, plata y bronce
@@ -131,7 +131,7 @@ Vemos los países que obtienen medallas de oro.
 
 ```{r}
 # Países con medalla de oro
-head(unique(athlete_events_oro$NOC))
+head(unique(athlete_events_oro$NOC),3)
 ```
 
 Creamos una tabla en donde se muestre la cantidad de medallas de oro que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de oro.
@@ -146,7 +146,7 @@ Para tener el top 10 de países con mayor cantidad de medallas de oro filtramos 
 
 ```{r}
 top10_oro <- tabla_paises_oro[0:10,]
-head(top10_oro)
+head(top10_oro,3)
 ```
 
 Graficamos la cantidad de medallas de oro que tiene cada país que se encuentra en el top 10.
@@ -168,7 +168,7 @@ Vemos los países que obtienen medallas de plata.
 
 ```{r}
 # Países con medalla de plata
-head(unique(athlete_events_plata$NOC))
+head(unique(athlete_events_plata$NOC),3)
 ```
 
 Creamos una tabla en donde se muestre la cantidad de medallas de plata que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de plata.
@@ -183,7 +183,7 @@ Para tener el top 10 de países con mayor cantidad de medallas de plata filtramo
 
 ```{r}
 top10_plata <- tabla_paises_plata[0:10,]
-head(top10_plata)
+head(top10_plata,3)
 ```
 
 Graficamos la cantidad de medallas de plata que tiene cada país que se encuentra en el top 10.
@@ -205,7 +205,7 @@ Vemos los países que obtienen medallas de bronce.
 
 ```{r}
 # Países con medalla de bronce
-head(unique(athlete_events_bronce$NOC))
+head(unique(athlete_events_bronce$NOC),3)
 ```
 
 Creamos una tabla en donde se muestre la cantidad de medallas de bronce que ha obtenido cada país durante los 120 años, y ordenamos los países de mayor a menor según la cantidad de medallas de bronce
@@ -220,7 +220,7 @@ Para tener el top 10 de países con mayor cantidad de medallas de bronce filtram
 
 ```{r}
 top10_bronce <- tabla_paises_bronce[0:10,]
-head(top10_bronce)
+head(top10_bronce,3)
 ```
 
 Graficamos la cantidad de medallas de bronce que tiene cada país que se encuentra en el top 10.
@@ -296,6 +296,9 @@ barplot(table(athlete_events1$Sex)  , main = "Histograma de participación segú
 ### Medallas por país y ciudad
 
 ```{r}
+library(tidyr)
+athlete_events <- read.csv("athlete_events.csv")
+noc_regions <- read.csv("noc_regions.csv") #para algo será útil en algún momento
 
 #Correlación Nacionalidad con Sede (obtener país según “Games”)
 #como tenemos valores categoricos no podemos aplicar directamente una
@@ -308,8 +311,20 @@ athlete_events_medallas <- athlete_events_medallas[!is.na(athlete_events_medalla
 #ahora obtenemos la tabla de contingencia que nos indica cuántas veces un país
 #obtuvo medallas en cierta ciudad.
 tabla_contingencia <- data.frame(table(athlete_events_medallas$NOC, athlete_events_medallas$City))
+
+#creamos un nuevo dataframe con los top 10 paises que tengan más medallas
 tabla_contingencia <- tabla_contingencia  [order(tabla_contingencia$Freq, decreasing = TRUE), ]
-head(tabla_contingencia)
+top10_paises <- tabla_contingencia[0:10,]
+top10_paises <- unite(top10_paises, pais_sede, c(1:2), sep = " - ", remove = TRUE)
+
+#gráfico 
+library(ggplot2)  # cargamos la librería
+
+ggplot(top10_paises) +   # asociamos un data frame a ggplot
+  geom_bar(aes(x = reorder(pais_sede, Freq), y = Freq), stat="identity") +   # creamos un gráfico de barras como una capa
+  coord_flip() +  # transformamos el gráfico invirtiendo los ejes de coordenadas (sólo visualmente)
+  ggtitle("Top 10 paises que ganaron más medallas por sede") + # título
+  xlab("País - Sede ") + ylab("Cantidad de medallas ")  # etiquetas
 ```
 
 ### Barplot de medallas por mujeres
@@ -394,7 +409,7 @@ title('Cantidad de hombres participantes por país')
 med<-atletas%>%
   group_by(Sport)%>%
   summarise(total=sum(cuentamedalla))
-med
+
 
 #distribucion de medallas por deporte
 barplot(med$total, names.arg=med$Sport, xlab='Deportes', ylab= 'Medallas')
@@ -415,7 +430,7 @@ gdp_per_capita1 <- gdp_per_capita1[order(gdp_per_capita1$mean, decreasing = TRUE
 #se muestra el nombre del país y su PIB per capita promedio
 top <- data.frame(gdp_per_capita1$`Country.Name`,gdp_per_capita1$mean)
 
-head(top,20)
+head(top,3)
 ```
 
 ### Matriz de correlación
